@@ -1,0 +1,119 @@
+.navbar {
+  position: static;
+  margin-bottom: 18px;
+}
+
+.container {
+  width: 280px;
+}
+
+.chains button.switch {
+  width: 116px;
+  margin: 4px 1px;
+}
+
+.chains button.wide {
+  width: 238px;
+}
+
+.manual button.manual {
+  width: 50px;
+  padding: 10px 4px;
+}
+
+.manual input.manual {
+  width: 181px;
+  padding: 10px 4px;
+  font-size: 150%;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.manual .btn-group .switch {
+  width: 96px;
+}
+
+.manual .btn-group .add {
+  width: 50px;
+}
+
+.manual .onoff {
+  margin-top: 8px;
+}
+
+aside#dips {
+  display: none;
+}
+
+.dip {
+  padding: 2px 4px;
+  display: inline-block;
+  width: 200px;
+  margin: 4px 12px;
+  text-align: center;
+}
+
+.dip div {
+  padding: 2px;
+  background: #924142;
+  border-color: #C00;
+  color: white;
+  margin: 0;
+  letter-spacing: .2em;
+  font: 12px/14px "Courier New" !important;
+  cursor: pointer;
+}
+
+.dip div:first-line {
+  letter-spacing: 6px;
+  font: 20px/28px "Courier New" !important;
+}
+
+aside#userselect, aside#infobox, aside#chainedit {
+  display: none;
+}
+
+aside#infobox footer span {
+  float: left;
+  color: #CCC;
+}
+
+aside#userselect button.user {
+  width: 98%;
+  margin: 4px;
+}
+
+h2 small {
+  float: right;
+}
+
+table tbody tr:only-child button {
+  display: none;
+}
+
+/*BIIIIIGGGG!!*/
+@media all and (min-width: 540px) {
+  .container {
+    width: 480px;
+  }
+  
+  .chains button.switch {
+    width: 216px;
+  }
+
+  .chains button.wide {
+    width: 438px;
+  }
+  
+  .dip {
+    margin: 4px 2px;
+  }
+
+  .manual .btn-group .switch {
+    width: 196px;
+  }
+
+  .manual input.manual {
+    width: 381px;
+  }
+}

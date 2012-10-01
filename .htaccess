@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^\/\.]+)/(chain|user|switch)/(\d+)/([^\?]+)$ index.php?user=$1&method=$2&id=$3&action=$4  [QSA,L,NS]
+RewriteRule ^([^\/\.]+)/(chain|user|switch)/(\d+)$ index.php?user=$1&method=$2&id=$3  [QSA,L,NS]
+RewriteRule ^([^\/\.]+)/(chain|user|switch)$ index.php?user=$1&method=$2  [QSA,L,NS]
+RewriteRule ^(info)$ $1.php  [QSA,L,NS]
+RewriteRule ^([^\/\.]+)$ index.php?user=$1  [QSA,L,NS]

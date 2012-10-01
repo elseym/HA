@@ -22,28 +22,61 @@
         switch ($_POST['method']) {
           case "getlog":
             
+            $result['success'] = true;
             break;
           default:
             $result['error'] = "method not defined.";
         }
         break;
-      
+
+			case "chains":
+				switch ($_POST['method']) {
+					case "list":
+						if (!array_key_exists($_POST['id'], $users) || count($users[$_POST['id']]->getChains()) == 0) {
+            	$result['error'] = "no chains for user " . $_POST['id'];
+							break;
+						}
+						$chains = $users[$_POST['id']]->getChains();
+						foreach ($chains as $chain) {
+							$result['data'][] = array(
+								"id" => $chain->getId(),
+								"name" => $chain->getName(),
+								"switch-count" => count($chain->getSwitches())
+							);
+						}
+						$result['success'] = true;
+						break;
+						
+					default:
+            $result['error'] = "method not defined.";
+				}
+				break;
+			
+			case "switch":
+			  break;
+			  
       case "chain":
         if (!$chain = findChain($users)) break;
         switch ($_POST['method']) {
           case "activate":
-            $chain->activate();
+            try {
+              $chain->activate();
+              $result['success'] = true;
+            } catch (HAInterfaceException $ie) {
+              $result['error'] = $ie->getMessage();
+            }
             break;
             
           case "rename":
             if (isset($_POST['name'])) {
               $n = trim($_POST['name']);
               if ($n != "" && $n != $chain->getName()) $chain->setName($n);
+              HAPersistor::save($users);
+              $result['success'] = true;
             } else $result['error'] = "missing parameter.";
             break;
             
           case "details":
-            var_dump($_POST);
             foreach($chain->getSwitches() as $sw)
               $s[] = array(
                 "id"      => $sw->getId(),
@@ -58,17 +91,19 @@
               "name"     => $chain->getName(),
               "switches" => $s
             );
+            $result['success'] = true;
             break;
             
           case "delete":
             $chain->delete();
+            HAPersistor::save($users);
             $result['callback'] = 'reload';
+            $result['success'] = true;
             break;
             
           default:
             $result['error'] = "method not defined.";
         }
-        HAPersistor::save($users);
         break;
         
       case "manual":

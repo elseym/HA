@@ -23,10 +23,15 @@ class HAChain extends HAElement
   
   function __construct($id = null, $user = null, $name = null) {
     if (is_array($id) && isset($id['id'], $id['user'], $id['name'])) extract($id);
-    $this->setId(is_null($id) ? null : (int)$id)
-         ->setUser((int)$user)
-         ->setName((string)$name)
-         ->setSwitches();
+    if (is_null($id) && empty($this->id)) throw new HAChainException("No id given.");
+    if (is_null($user) && empty($this->user)) throw new HAChainException("No user given.");
+    if (is_null($name) && empty($this->name)) throw new HAChainException("No name given.");
+    if (!empty($id) && !empty($user) && !empty($name)) {
+      $this->setId(is_null($id) ? null : (int)$id)
+           ->setUser((int)$user)
+           ->setName((string)$name);
+    }
+    $this->setSwitches();
   }
   
   public function activate() {
@@ -88,6 +93,20 @@ class HAChain extends HAElement
     }
     $this->switches = $switches;
     return $this;
+  }
+  
+  public function generateQueries() {
+    $queries = array();
+    if ($this->delete) {
+      foreach ($this->getSwitches() as $switch) $queries = array_merge($queries, $switch->delete()->generateQueries());
+      array_push($queries, "DELETE FROM `" . self::DBTBL . "` WHERE `id` = " . $this->getId() . " LIMIT 1;");
+    } else {
+      if ($this->dirty || $this->isNew()) {
+        array_push($queries, "REPLACE INTO `" . self::DBTBL . "` (`id`, `user`, `name`) VALUES (" . ($this->isNew() ? "NULL" : $this->getId()) . ", " . $this->getUser() . ", '" . $this->getName() . "');");
+      }
+      foreach ($this->getSwitches() as $switch) $queries = array_merge($queries, $switch->generateQueries());
+    }
+    return $queries;
   }
   
   public function __toString() {

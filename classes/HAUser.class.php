@@ -21,9 +21,13 @@ class HAUser extends HAElement
   
   function __construct($id = null, $name = null) {
     if (is_array($id) && isset($id['id'], $id['name'])) extract($id);
-    $this->setId(is_null($id) ? null : (int)$id)
-         ->setName((string)$name)
-         ->setChains();
+    if (is_null($id) && empty($this->id)) throw new HAUserException("No id given.");
+    if (is_null($name) && empty($this->name)) throw new HAUserException("No name given.");
+    if (!empty($id) && !empty($name)) {
+      $this->setId(is_null($id) ? null : (int)$id)
+        ->setName((string)$name);
+    }
+    $this->setChains();
   }
   
   public function getId() { return $this->id; }
@@ -71,6 +75,20 @@ class HAUser extends HAElement
     }
     $this->chains = $chains;
     return $this;
+  }
+  
+  public function generateQueries() {
+    $queries = array();
+    if ($this->delete) {
+      foreach ($this->getChains() as $chain) $queries = array_merge($queries, $chain->delete()->generateQueries());
+      array_push($queries, "DELETE FROM `" . self::DBTBL . "` WHERE `id` = " . $this->getId() . " LIMIT 1;");
+    } else {
+      if ($this->dirty || $this->isNew()) {
+        array_push($queries, "REPLACE INTO `" . self::DBTBL . "` (`id`, `name`) VALUES (" . ($this->isNew() ? "NULL" : $this->getId()) . ", '" . $this->getName() . "');");
+      }
+      foreach ($this->getChains() as $chain) $queries = array_merge($queries, $chain->generateQueries());
+    }
+    return $queries;
   }
   
   public function __toString() {

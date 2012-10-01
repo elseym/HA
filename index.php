@@ -47,7 +47,7 @@
     
     <section id="main" class="container">
       <? if ($user): ?>
-      <section id="<?=$user->getName()?>" class="chains well">
+      <section id="<?=$user->getName()?>-<?=$user->getId()?>" class="chains well">
         <h2>Chains <small><button data-toggle="button" id="editmode" class="btn btn-mini"><i class="icon-edit"></i></button></small></h2>
         <? foreach ($user->getChains() as $chain): ?>
         <button data-loading-text="schalte&hellip;" class="switch btn btn-warning btn-large<?=(strlen($chain->getName()) > 14 ? " wide" : "")?>" id="chain-<?=$chain->getId()?>"><?=$chain->getName()?></button>
@@ -84,6 +84,56 @@
           <button data-loading-text="Lösche&hellip;" class="user btn btn-danger pull-left" id="chainedit-delete">Löschen</button>
           <button data-loading-text="Abbrechen&hellip;" class="user btn" id="chainedit-cancel">Schließen</button>
           <button data-loading-text="Speichere&hellip;" class="user btn btn-success" id="chainedit-save">Speichern</button>
+        </footer>
+      </aside>
+      
+      <!-- Add modal -->
+      <aside id="chainadd" class="modal">
+        <header class="modal-header"><button class="close" data-dismiss="modal">×</button><h3>Hinzufügen</h3></header>
+        <section class="modal-body">
+					<h4>Schaltereinstellungen</h4>
+					<section id="chainadd-switch">
+						<div id="chainadd-switch-state" class="btn-group" data-toggle="buttons-radio">
+      		    <button id="chainadd-switch-state-on" class="btn btn-warning btn-large active"><i class="icon-asterisk icon-white"></i> Ein</button>
+		          <button id="chainadd-switch-state-off" class="btn btn-inverse btn-large"><i class="icon-off icon-white"></i> Aus</button>
+						</div>
+            <div class="btn-group">
+              <a id="chainadd-delay-choose" class="btn dropdown-toggle btn-large btn-info" data-toggle="dropdown" href="#">
+                <span id="chainadd-delay-text">0 sek.</span>
+                <span class="caret"></span>
+              </a>
+              <ul id="chainadd-delay-select" class="dropdown-menu">
+                <li><a id="chainadd-delay-value-0" href="#">Keine Verzögerung</a></li>
+                <li><a id="chainadd-delay-value-5" href="#">5 Sekunden</a></li>
+                <li><a id="chainadd-delay-value-30" href="#">30 Sekunden</a></li>
+                <li><a id="chainadd-delay-value-60" href="#">1 Minute</a></li>
+                <li><a id="chainadd-delay-value-1800" href="#">30 Minuten</a></li>
+                <li class="divider"></li>
+                <li><a id="chainadd-delay-value-custom" href="#">Benutzerdefiniert...</a></li>
+              </ul>
+            </div>
+  					<p class="muted">Soll der Schalter ein- oder ausgeschaltet werden und wie lange soll vor dem Schaltvorgang gewartet werden?</p>
+					</section>
+					<hr />
+					<h4>Verfügbare Chains</h4>
+					<section id="chainadd-list">
+            <div class="btn-group">
+              <a id="chainadd-list-choose" class="btn dropdown-toggle btn-large btn-info" data-toggle="dropdown" href="#">
+                <span id="chainadd-list-text">Chain auswählen...</span>
+                <span class="caret"></span>
+              </a>
+              <ul id="chainadd-list-select" class="dropdown-menu">
+                <li><a id="chainadd-list-value-new" data-name="Neu" href="#">Neue Chain...</a></li>
+                <li class="divider"></li>
+                <li><div class="progress progress-info progress-striped active" style="width:86%;margin:auto"><div class="bar" style="width: 100%;">lade Chains...</div></div></li>
+              </ul>
+            </div>
+					</section>
+					<p class="muted">Der gewählte Schalter wird ans Ende der Chain angefügt.</p>
+        </section>
+        <footer class="modal-footer">
+          <button data-loading-text="Abbrechen&hellip;" class="user btn" id="chainadd-cancel">Schließen</button>
+          <button data-loading-text="Speichere&hellip;" class="user btn btn-success" id="chainadd-save">Speichern</button>
         </footer>
       </aside>
       

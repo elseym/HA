@@ -2,6 +2,10 @@ var oldval = 0,
     editmode = false,
     selectedchain = 0;
 
+var chainadd_delay = 0,
+		chainadd_id = 0,
+		chainadd_name = "";
+
 $(function() {
   // MODALS
   $('aside#userselect')
@@ -12,6 +16,29 @@ $(function() {
       location.href = "/" + name;
     });
   
+	$('aside#chainadd')
+		.modal({ backdrop: 'static', keyboard: true, show: false })
+		.on('show', function() {
+			exec({'method': 'list', 'type': 'chains', 'id': userId() }, null, function(d) {
+				var cn = $('#chainadd-list-select');
+				if (d.success) {
+					cn.children().last().remove();
+					$(d.data).each(function(i, e) {
+						var a = $("<a>").text(e.name + " (" + e['switch-count'] + " Schalter)").attr({ 'id': 'chainadd-list-value-' + e.id, 'data-name': e.name });
+						$(cn).append($("<li>").append(a));
+					});
+				} else alert("error!");
+			});
+		})
+    .find("button#chainadd-save")
+      .on("click", function() {
+				alert("not yet...");
+      }).parent()
+    .find("button#chainadd-cancel")
+      .on("click", function() {
+        $('#chainadd').modal("hide");
+      });
+
   $('aside#infobox')
     .modal({ backdrop: 'static', keyboard: false, show: false });
     
@@ -101,8 +128,48 @@ $(function() {
   });
   
   $('.manual button.add').on("click", function() {
-    alert("no saving / chain creation, yet. sorry.");
+		$('aside#chainadd').modal('show');
   });
+
+	$('#chainadd-delay-select a').on('click', function() {
+		var val = $(this).attr('id').replace(/chainadd-delay-value-/, '');
+		val = parseInt((val == "custom" ? prompt('Verzögerung in Sekunden?', 0) : val)) | 0;
+		$('#chainadd-delay-text').text(val + " sek.");
+		chainadd_delay = val;
+	});
+
+	$('#chainadd-list-select a').live('click', function() {
+		var id = $(this).attr('id').replace(/chainadd-list-value-/, ''),
+				name = $(this).attr('data-name');
+		if (id == "new") {
+			var newname = prompt('Name der neuen Chain?', name);
+			if (newname == null) return false;
+			chainadd_id = -1;
+			chainadd_name = newname;
+		} else {
+			chainadd_id = id;
+			chainadd_name = name;
+		}
+		$('#chainadd-list-text').text("Chain: " + chainadd_name);
+	});
+	
+	$('#chainadd-FFFFFFFUUUUUUUUUUUUUU').on("click", function() {
+		$('<button>')
+			.addClass("switch btn btn-info btn-large" + (e.name.length > 14 ? " wide" : ""))
+			.attr('id', 'chainadd-chain' + e['id'])
+			.text(e.name + " (" + e['switch-count'] + ")")
+			.on('click', function() {
+				var postData = {
+					'method': 'add',
+					'type': 'switch',
+					'target': parseInt($(this).attr('id').replace(/chainadd-chain/i, '')),
+					'id': 0,
+					'delay': parseInt($('chainadd-switch-delay').val()) || 0,
+					'state': $('#chainadd-switch-state-on').hasClass('active') ? 1 : 0
+				};
+				exec(postData, null, function(d) { location.reload() });
+			});
+	});
   
   
   // SWITCHES
@@ -159,6 +226,15 @@ function exec(data, btn, cb) {
     if (cb) cb(d);
     if (btn) btn.button('reset');
   }, "json");
+}
+
+function userId() {
+	var el = $('.chains.well');
+	if (el.length == 0) return false;
+	var elid = el.attr('id'),
+			usid = parseInt((elid.match(/(\S+)\-(\d+)/i) || [,,])[2] || 0);
+	if (!usid || usid <= 0) return false;
+	return usid;
 }
 
 // ▄▀

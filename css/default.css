@@ -69,7 +69,14 @@ aside#dips {
   font: 20px/28px "Courier New" !important;
 }
 
-aside#userselect, aside#infobox, aside#chainedit {
+section#chainadd-switch div.btn-group,
+section#chainadd-list div.btn-group {
+	display: inline-block;
+	padding: 0 10px;
+	margin: 10px 0;
+}
+
+aside#userselect, aside#infobox, aside#chainedit, aside#chainadd {
   display: none;
 }
 

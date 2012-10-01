@@ -44,6 +44,7 @@
 								"switch-count" => count($chain->getSwitches())
 							);
 						}
+						sleep(2);
 						$result['success'] = true;
 						break;
 						
@@ -58,6 +59,17 @@
       case "chain":
         if (!$chain = findChain($users)) break;
         switch ($_POST['method']) {
+          case "add":
+						var_dump($_REQUEST);
+						break;
+						if (!array_key_exists($_POST['id'], $users)) {
+							$result['error'] = "user does not exist.";
+							break;
+						}
+						$users[$_POST['id']]->addChain(null, $_POST['name']);
+            $result['success'] = true;
+						break;
+						
           case "activate":
             try {
               $chain->activate();

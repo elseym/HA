@@ -22,10 +22,10 @@ class HASwitch extends HAElement
   
   function __construct($id = null, $chain = null, $number = null, $state = false, $delay = 0) {
     if (is_array($id) && isset($id['id'], $id['chain'], $id['number'])) extract($id);
-    if (is_null($id) && empty($this->id)) throw new HASwitchException("No id given.");
+    //if (is_null($id) && empty($this->id)) throw new HASwitchException("No id given.");
     if (is_null($chain) && empty($this->chain)) throw new HASwitchException("No chain given.");
     if (is_null($number) && empty($this->number)) throw new HASwitchException("No number given.");
-    if (!empty($id) && !empty($chain) && !empty($number)) {
+    if (!empty($chain) && !empty($number)) {
       $this->setId(is_null($id) ? null : (int)$id)
            ->setChain((int)$chain)
            ->setNumber((int)$number)
@@ -91,10 +91,10 @@ class HASwitch extends HAElement
   public function generateQueries() {
     $queries = array();
     if ($this->delete) {
-      array_push($queries, "DELETE FROM `" . self::DBTBL . "` WHERE `id` = " . $this->getId() . " LIMIT 1;");
+      array_push($queries, "DELETE FROM `" . self::DBTBL . "` WHERE `id` = " . $this->getId());
     } else {
       if ($this->dirty || $this->isNew()) {
-        array_push($queries, "REPLACE INTO `" . self::DBTBL . "` (`id`, `chain`, `number`, `state`, `delay`) VALUES (" . ($this->isNew() ? "NULL" : $this->getId()) . ", " . $this->getChain() . ", " . $this->getNumber() . ", `state` = " . $this->getState(true) . ", " . $this->getDelay() . ");");
+        array_push($queries, "REPLACE INTO `" . self::DBTBL . "` (`id`, `chain`, `number`, `state`, `delay`) VALUES (" . ($this->isNew() ? "NULL" : $this->getId()) . ", " . $this->getChain() . ", " . $this->getNumber() . ", " . $this->getState(true) . ", " . $this->getDelay() . ");");
       }
     }
     return $queries;

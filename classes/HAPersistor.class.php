@@ -124,8 +124,11 @@ class HAPersistor
     if (!$noPersist && !empty($queries)) {
       $db = new PDO("sqlite:" . self::DBFILE);
       $ret = true;
-      foreach ($queries as $query) $ret = $ret && (false !== $db->exec($query));
-      if (!$ret) throw new HAPersistorException("Could not save data.");
+      foreach ($queries as $query) if (!($ret = $ret && (false !== $db->exec($query)))) break;
+      if (!$ret) {
+        $ei = $db->errorInfo();
+        throw new HAPersistorException("Could not save data.\nlast query: $query\npdo error:" . $ei[2]);
+      }
     }
   }
   

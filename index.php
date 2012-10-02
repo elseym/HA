@@ -91,7 +91,7 @@
       <aside id="chainadd" class="modal">
         <header class="modal-header"><button class="close" data-dismiss="modal">×</button><h3>Hinzufügen</h3></header>
         <section class="modal-body">
-					<h4>Schaltereinstellungen</h4>
+					<h4>Schaltereinstellungen <small></small></h4>
 					<section id="chainadd-switch">
 						<div id="chainadd-switch-state" class="btn-group" data-toggle="buttons-radio">
       		    <button id="chainadd-switch-state-on" class="btn btn-warning btn-large active"><i class="icon-asterisk icon-white"></i> Ein</button>

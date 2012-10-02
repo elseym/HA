@@ -98,6 +98,10 @@ table tbody tr:only-child button {
   display: none;
 }
 
+ul.dropdown-menu li a {
+	line-height: 2em;
+}
+
 /*BIIIIIGGGG!!*/
 @media all and (min-width: 540px) {
   .container {

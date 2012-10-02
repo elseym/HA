@@ -2,8 +2,8 @@ var oldval = 0,
     editmode = false,
     selectedchain = 0;
 
-var chainadd_delay = 0,
-		chainadd_id = 0,
+var	chainadd_delay = chainadd_id = chainadd_number = 0;
+		chainadd_state = true;
 		chainadd_name = "";
 
 $(function() {
@@ -19,6 +19,12 @@ $(function() {
 	$('aside#chainadd')
 		.modal({ backdrop: 'static', keyboard: true, show: false })
 		.on('show', function() {
+			chainadd_number = parseInt($('input#manual-num').val());
+			if (isNaN(chainadd_number) || chainadd_number < 1 || chainadd_number > 1024) {
+				alert("Bitte zuerst eine gültige Schalternummer wählen!");
+				return false;
+			}
+			$('aside#chainadd h4 small').text("#" + chainadd_number);
 			exec({'method': 'list', 'type': 'chains', 'id': userId() }, null, function(d) {
 				var cn = $('#chainadd-list-select');
 				if (d.success) {
@@ -32,11 +38,20 @@ $(function() {
 		})
     .find("button#chainadd-save")
       .on("click", function() {
-				alert("not yet...");
+				var postData = {
+					method: 'add', type: 'switch',
+					id: userId(), chain: chainadd_id, // -1 for new
+					name: chainadd_name, delay: chainadd_delay,
+					state: chainadd_state ? 1 : 0, number: chainadd_number
+				};
+				exec(postData, null, function(d) { /*location.reload();*/ });
       }).parent()
     .find("button#chainadd-cancel")
       .on("click", function() {
         $('#chainadd').modal("hide");
+				chainadd_delay = chainadd_id = chainadd_number = 0;
+				chainadd_state = true;
+				chainadd_name = "";
       });
 
   $('aside#infobox')
@@ -66,15 +81,18 @@ $(function() {
             $("button#chainedit-save").show();
           });
         $(d.data.switches).each(function(i, e) {
-          tbd.append($('<tr>').append('<td>' + e.number + '</td>')
-                              .append('<td>' + (e.state ? "An" : "Aus") + '</td>')
+          tbd.append($('<tr>').attr({ id: 'switch-' + e.id })
+															.append('<td>' + e.number + '</td>')
+                              .append('<td>' + (e.state == "1" ? "An" : "Aus") + '</td>')
                               .append('<td>' + parseInt(e.delay) + ' sek.</td>')
                               .append($('<td>').append(delbtn.clone().attr({ 'id': 'chainedit-deleteswitch-' + e.id }).addClass("chainedit-deleteswitch"))));
         });
         $("#chainedit section.modal-body").empty().append(tbl.append(thd).append(tbd));
         $('#chainedit .chainedit-deleteswitch').on("click", function() {
-          if (confirm("Schalter #" + $(this).parent().parent().find('td:first-child').text() + " wirklich aus der Chain entfernen?")) {
-            var postData = { 'type': 'chain', 'method': 'deleteswitch', 'id': selectedchain };
+					var switchnum = parseInt($(this).parent().parent().find('td:first-child').text()),
+							switchid = parseInt($(this).parent().parent().attr('id').replace(/switch-/, ''));
+          if (confirm("Schalter #" + switchnum + " wirklich aus dieser Chain entfernen?")) {
+            var postData = { 'type': 'chain', 'method': 'removeswitch', 'id': selectedchain, number: switchid };
             exec(postData, $(this), function(d) { location.reload(); });
           }
         });
@@ -153,22 +171,8 @@ $(function() {
 		$('#chainadd-list-text').text("Chain: " + chainadd_name);
 	});
 	
-	$('#chainadd-FFFFFFFUUUUUUUUUUUUUU').on("click", function() {
-		$('<button>')
-			.addClass("switch btn btn-info btn-large" + (e.name.length > 14 ? " wide" : ""))
-			.attr('id', 'chainadd-chain' + e['id'])
-			.text(e.name + " (" + e['switch-count'] + ")")
-			.on('click', function() {
-				var postData = {
-					'method': 'add',
-					'type': 'switch',
-					'target': parseInt($(this).attr('id').replace(/chainadd-chain/i, '')),
-					'id': 0,
-					'delay': parseInt($('chainadd-switch-delay').val()) || 0,
-					'state': $('#chainadd-switch-state-on').hasClass('active') ? 1 : 0
-				};
-				exec(postData, null, function(d) { location.reload() });
-			});
+	$('button[id^="chainadd-switch-state-"]').on("click", function() {
+		chainadd_state = !!($(this).attr('id').match(/on$/));
 	});
   
   

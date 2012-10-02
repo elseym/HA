@@ -44,7 +44,7 @@ $(function() {
 					name: chainadd_name, delay: chainadd_delay,
 					state: chainadd_state ? 1 : 0, number: chainadd_number
 				};
-				exec(postData, null, function(d) { /*location.reload();*/ });
+				exec(postData, null, function(d) { location.reload(); });
       }).parent()
     .find("button#chainadd-cancel")
       .on("click", function() {

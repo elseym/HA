@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
     <title>R9E Control - <?=(is_null($user) ? "Willkommen" : $user->getName())?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=320.1, initial-scale=1, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="description" content="Nifty Home Automation">

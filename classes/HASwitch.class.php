@@ -28,10 +28,10 @@ class HASwitch extends HAElement
     if (!empty($id) && !empty($chain) && !empty($number)) {
       $this->setId(is_null($id) ? null : (int)$id)
            ->setChain((int)$chain)
-           ->setNumber((int)$number);
+           ->setNumber((int)$number)
+           ->setState((bool)$state)
+           ->setDelay((int)$delay);
     }
-    $this->setState((bool)$state)
-         ->setDelay((int)$delay);
   }
   
   public function getOp($debug = false, $simulate = false) {
